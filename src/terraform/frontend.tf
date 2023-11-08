@@ -7,8 +7,8 @@ resource "azurerm_storage_account" "frontend" {
   account_replication_type = "LRS"
 }
 
-resource "azurerm_storage_account_static_website" "frontend" {
-  storage_account_name = azurerm_storage_account.frontend.name
-  index_document       = "index.html"
-  error_404_document   = "index.html"
+resource "azurerm_static_site" "frontend" {
+  name                = "stap-${var.application_name}-${var.environment_name}-${random_string.main.result}"
+  resource_group_name = azurerm_resource_group.main.name
+  location            = azurerm_resource_group.main.location
 }

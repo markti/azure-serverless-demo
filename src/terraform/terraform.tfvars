@@ -1,1 +1,1 @@
-primary_region = "westus3"
+primary_region = "centralus"

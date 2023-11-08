@@ -110,6 +110,6 @@ jobs:
 
     - id: deploy
       name: Upload to Blob
-      working-directory: ${{ env.DOTNET_WORKING_DIRECTORY }}/publish
+      working-directory: ${{ env.DOTNET_WORKING_DIRECTORY }}
       run: |
         az storage blob upload-batch -s ./upload-staging -d \$web --account-name ${{ steps.terraform.outputs.frontend_storage_account_name }}

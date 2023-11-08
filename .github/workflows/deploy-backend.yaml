@@ -78,8 +78,8 @@ jobs:
         terraform_version: ${{ env.TERRAFORM_VERSION }}
         terraform_wrapper: false
 
-    - id: terraform
-      name: Terraform Output
+    - id: apply
+      name: Terraform Apply
       env:
         ARM_SUBSCRIPTION_ID: ${{ vars.ARM_SUBSCRIPTION_ID }}
         ARM_TENANT_ID: ${{ vars.ARM_TENANT_ID }}

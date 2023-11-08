@@ -59,8 +59,10 @@ jobs:
         path: ${{ env.DOTNET_WORKING_DIRECTORY }}/deployment.zip
 
   terraform:
-    needs: [build]
     runs-on: ubuntu-latest
+    outputs:
+      function_name: ${{ steps.apply.outputs.function_name }}
+      resource_group_name: ${{ steps.apply.outputs.resource_group_name }}
 
     environment:
       name: ${{ github.event.inputs.environment }}

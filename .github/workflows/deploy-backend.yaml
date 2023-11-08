@@ -1,4 +1,4 @@
-name: Deploy-Frontend
+name: Deploy-Backend
 
 on:
   workflow_dispatch:
@@ -10,7 +10,7 @@ on:
 
 env:
   DOTNET_VERSION: '6.0.401' # The .NET SDK version to use
-  DOTNET_WORKING_DIRECTORY: "./src/dotnet/frontend/FleetPortal"
+  DOTNET_WORKING_DIRECTORY: "./src/dotnet/backend/FleetAPI"
 
 jobs:
 
@@ -95,31 +95,31 @@ jobs:
 
         terraform apply -refresh-only
 
-        frontend_storage_account_name=$(terraform output -raw frontend_storage_account_name)
-        echo $frontend_storage_account_name
-        echo "frontend_storage_account_name=$frontend_storage_account_name" >> "$GITHUB_OUTPUT"
+        resource_group_name=$(terraform output -raw resource_group_name)
+        echo $resource_group_name
+        echo "resource_group_name=$resource_group_name" >> "$GITHUB_OUTPUT"
+
+        function_name=$(terraform output -raw function_name)        
+        echo $function_name
+        echo "function_name=$function_name" >> "$GITHUB_OUTPUT"
 
     - uses: actions/download-artifact@v3
       with:
         name: dotnet-deployment
 
-    - name: Unzip Deployment Package
-      run: |
-        mkdir -p ${{ env.DOTNET_WORKING_DIRECTORY }}/upload-staging
-        unzip ./deployment.zip -d ${{ env.DOTNET_WORKING_DIRECTORY }}/upload-staging
-
     - id: deploy
-      name: Upload to Blob
+      name: Deploy Function App
       env:
         ARM_SUBSCRIPTION_ID: ${{ vars.ARM_SUBSCRIPTION_ID }}
         ARM_TENANT_ID: ${{ vars.ARM_TENANT_ID }}
         ARM_CLIENT_ID: ${{ vars.TERRAFORM_ARM_CLIENT_ID }}
         ARM_CLIENT_SECRET: ${{ secrets.TERRAFORM_ARM_CLIENT_SECRET }}
-      working-directory: ${{ env.DOTNET_WORKING_DIRECTORY }}
+        RESOURCE_GROUP_NAME: ${{needs.terraform.outputs.resource_group_name}}
+        FUNCTION_NAME: ${{needs.terraform.outputs.function_name}}
       run: |
         # login
         az login --service-principal --username $ARM_CLIENT_ID --password $ARM_CLIENT_SECRET --tenant $ARM_TENANT_ID
         # set subscription
         az account set -s $ARM_SUBSCRIPTION_ID
         # deploy azure function
-        az functionapp deployment source config-zip -g $1 -n $2 --src $3
+        az functionapp deployment source config-zip -g $RESOURCE_GROUP_NAME -n $FUNCTION_NAME --src ./deployment.zip

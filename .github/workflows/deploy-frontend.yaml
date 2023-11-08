@@ -119,4 +119,4 @@ jobs:
       run: |
         az login --service-principal -u $ARM_CLIENT_ID -p $ARM_CLIENT_SECRET --tenant $ARM_TENANT_ID
         az account set --subscription $ARM_SUBSCRIPTION_ID
-        az storage blob upload-batch -s ./upload-staging -d \$web --account-name ${{ steps.terraform.outputs.frontend_storage_account_name }}
+        az storage blob upload-batch -s ./upload-staging/wwwroot -d \$web --account-name ${{ steps.terraform.outputs.frontend_storage_account_name }}

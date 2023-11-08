@@ -40,7 +40,7 @@ jobs:
       run: |
         pwd
         ls
-        dotnet publish ./FleetAPI.csproj -c Release -o ./publish
+        dotnet publish -c Release -o ./publish
       working-directory: ${{ env.DOTNET_WORKING_DIRECTORY }}
 
     - name: Generate the Deployment Package

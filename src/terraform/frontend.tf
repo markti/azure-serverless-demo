@@ -7,7 +7,7 @@ resource "azurerm_storage_account" "frontend" {
   account_replication_type = "LRS"
 
   static_website {
-    index_document     = "index.html"
+    index_document     = "wwwroot/index.html"
     error_404_document = "404.html"
   }
 }

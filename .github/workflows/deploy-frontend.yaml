@@ -110,6 +110,13 @@ jobs:
 
     - id: deploy
       name: Upload to Blob
+      env:
+        ARM_SUBSCRIPTION_ID: ${{ vars.ARM_SUBSCRIPTION_ID }}
+        ARM_TENANT_ID: ${{ vars.ARM_TENANT_ID }}
+        ARM_CLIENT_ID: ${{ vars.TERRAFORM_ARM_CLIENT_ID }}
+        ARM_CLIENT_SECRET: ${{ secrets.TERRAFORM_ARM_CLIENT_SECRET }}
       working-directory: ${{ env.DOTNET_WORKING_DIRECTORY }}
       run: |
+        az login --service-principal -u $ARM_CLIENT_ID -p $ARM_CLIENT_SECRET --tenant $ARM_TENANT_ID
+        az account set --subscription $ARM_SUBSCRIPTION_ID
         az storage blob upload-batch -s ./upload-staging -d \$web --account-name ${{ steps.terraform.outputs.frontend_storage_account_name }}

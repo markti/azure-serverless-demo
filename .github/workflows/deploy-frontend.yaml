@@ -103,15 +103,10 @@ jobs:
       with:
         name: dotnet-deployment
 
-    - name: Copy Deployment Package
-      working-directory: ${{ env.DOTNET_WORKING_DIRECTORY }}
-      run: |
-        cp ./deployment.zip ./publish/deployment.zip
-
     - name: Unzip Deployment Package
-      working-directory: ${{ env.DOTNET_WORKING_DIRECTORY }}/publish
       run: |
-        unzip ./deployment.zip -d ./upload-staging
+        mkdir -p ${{ env.DOTNET_WORKING_DIRECTORY }}/upload-staging
+        unzip ./deployment.zip -d ${{ env.DOTNET_WORKING_DIRECTORY }}/upload-staging
 
     - id: deploy
       name: Upload to Blob

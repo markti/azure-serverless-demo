@@ -28,7 +28,7 @@ resource "azurerm_user_assigned_identity" "function" {
 
 resource "azurerm_role_assignment" "function_storage_reader" {
   scope                = azurerm_storage_account.function.id
-  role_definition_name = "Blob Storage Reader"
+  role_definition_name = "Storage Blob Data Reader"
   principal_id         = azurerm_user_assigned_identity.function.principal_id
 }
 

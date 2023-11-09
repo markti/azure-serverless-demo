@@ -59,7 +59,7 @@ resource "azurerm_linux_function_app" "main" {
 
   identity {
     type         = "UserAssigned"
-    identity_ids = [azurerm_user_assigned_identity.main.id]
+    identity_ids = [azurerm_user_assigned_identity.function.id]
   }
 }
 

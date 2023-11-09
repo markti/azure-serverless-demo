@@ -76,6 +76,10 @@ jobs:
       with:
         name: dotnet-deployment
 
+    - name: Stage Deployment Package
+      run: |
+        cp ./deployment.zip ${{ vars.TERRAFORM_WORKING_DIRECTORY }}
+
     - id: setup-terraform
       name: Setup `terraform`
       uses: hashicorp/setup-terraform@v2

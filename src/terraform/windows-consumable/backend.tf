@@ -42,7 +42,7 @@ resource "azurerm_windows_function_app" "main" {
 
   site_config {
     application_stack {
-      dotnet_version = "6.0"
+      dotnet_version = "v6.0"
     }
     cors {
       allowed_origins     = ["https://portal.azure.com"]

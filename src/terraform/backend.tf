@@ -54,7 +54,7 @@ resource "azurerm_storage_container" "deployment" {
 
 resource "azurerm_storage_blob" "deployment_package" {
 
-  count = var.deployment_package == null ? 0 : 1
+  count = var.zip_deployment_package == null ? 0 : 1
 
   name                   = "deployment.zip"
   storage_account_name   = azurerm_storage_account.main.name

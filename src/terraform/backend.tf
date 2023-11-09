@@ -26,7 +26,7 @@ resource "azurerm_userassigned_identity" "function" {
   location            = azurerm_resource_group.main.location
 }
 
-resource "azurerm_roleassignment" "function_storage_reader" {
+resource "azurerm_role_assignment" "function_storage_reader" {
   scope                = azurerm_storage_account.function.id
   role_definition_name = "Blob Storage Reader"
   principal_id         = azurerm_userassigned_identity.function.principal_id

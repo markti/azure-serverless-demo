@@ -48,7 +48,7 @@ resource "azurerm_linux_function_app" "main" {
 
 resource "azurerm_storage_container" "deployment" {
   name                  = "deployments"
-  storage_account_name  = azurerm_storage_account.example.name
+  storage_account_name  = azurerm_storage_account.main.name
   container_access_type = "public"
 }
 

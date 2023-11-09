@@ -60,6 +60,6 @@ resource "azurerm_storage_blob" "deployment_package" {
   storage_account_name   = azurerm_storage_account.main.name
   storage_container_name = azurerm_storage_container.deployment.name
   type                   = "Block"
-  source                 = "deployment.zip"
+  source                 = var.deployment_package
 
 }

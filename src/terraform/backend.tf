@@ -20,7 +20,7 @@ resource "azurerm_service_plan" "consumption" {
   sku_name            = "Y1"
 }
 
-resource "azurerm_userassigned_identity" "function" {
+resource "azurerm_user_assigned_identity" "function" {
   name                = "mi-${var.application_name}-${var.environment_name}-${random_string.main.result}"
   resource_group_name = azurerm_resource_group.main.name
   location            = azurerm_resource_group.main.location
@@ -29,7 +29,7 @@ resource "azurerm_userassigned_identity" "function" {
 resource "azurerm_role_assignment" "function_storage_reader" {
   scope                = azurerm_storage_account.function.id
   role_definition_name = "Blob Storage Reader"
-  principal_id         = azurerm_userassigned_identity.function.principal_id
+  principal_id         = azurerm_user_assigned_identity.function.principal_id
 }
 
 resource "azurerm_linux_function_app" "main" {

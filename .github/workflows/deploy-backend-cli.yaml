@@ -115,7 +115,7 @@ jobs:
         echo $function_name
         echo "function_name=$function_name" >> "$GITHUB_OUTPUT"
  
-  github_crawler_deploy:
+  deploy:
     needs: [terraform, build]
     runs-on: ubuntu-latest
     steps:

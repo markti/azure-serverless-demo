@@ -59,6 +59,7 @@ jobs:
         path: ${{ env.DOTNET_WORKING_DIRECTORY }}/deployment.zip
 
   terraform:
+    needs: [build]
     runs-on: ubuntu-latest
     outputs:
       function_name: ${{ steps.apply.outputs.function_name }}
@@ -70,6 +71,10 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
+
+    - uses: actions/download-artifact@v3
+      with:
+        name: dotnet-deployment
 
     - id: setup-terraform
       name: Setup `terraform`
@@ -95,44 +100,4 @@ jobs:
           -backend-config="container_name=${{ vars.BACKEND_STORAGE_CONTAINER_NAME }}" \
           -backend-config="key=${{ vars.APPLICATION_NAME }}-${{ vars.ENVIRONMENT_NAME }}"
 
-        terraform apply -refresh-only -auto-approve
-
-        resource_group_name=$(terraform output -raw resource_group_name)
-        echo $resource_group_name
-        echo "resource_group_name=$resource_group_name" >> "$GITHUB_OUTPUT"
-
-        function_name=$(terraform output -raw function_name)        
-        echo $function_name
-        echo "function_name=$function_name" >> "$GITHUB_OUTPUT"
-
-  deploy:
-    needs: [terraform, build]
-    runs-on: ubuntu-latest
-
-    environment:
-      name: ${{ github.event.inputs.environment }}
-
-    steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
-
-    - uses: actions/download-artifact@v3
-      with:
-        name: dotnet-deployment
-
-    - id: deploy
-      name: Deploy Function App
-      env:
-        ARM_SUBSCRIPTION_ID: ${{ vars.ARM_SUBSCRIPTION_ID }}
-        ARM_TENANT_ID: ${{ vars.ARM_TENANT_ID }}
-        ARM_CLIENT_ID: ${{ vars.TERRAFORM_ARM_CLIENT_ID }}
-        ARM_CLIENT_SECRET: ${{ secrets.TERRAFORM_ARM_CLIENT_SECRET }}
-        RESOURCE_GROUP_NAME: ${{ needs.terraform.outputs.resource_group_name }}
-        FUNCTION_NAME: ${{ needs.terraform.outputs.function_name }}
-      run: |
-        # login
-        az login --service-principal --username $ARM_CLIENT_ID --password $ARM_CLIENT_SECRET --tenant $ARM_TENANT_ID
-        # set subscription
-        az account set -s $ARM_SUBSCRIPTION_ID
-        # deploy azure function
-        az functionapp deployment source config-zip -g $RESOURCE_GROUP_NAME -n $FUNCTION_NAME --src ./deployment.zip
+        terraform apply -auto-approve

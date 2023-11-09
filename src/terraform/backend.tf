@@ -40,8 +40,26 @@ resource "azurerm_linux_function_app" "main" {
 
   app_settings = {
     "SCM_DO_BUILD_DURING_DEPLOYMENT" = "false"
-    "WEBSITE_RUN_FROM_PACKAGE"       = "1"
+    "WEBSITE_RUN_FROM_PACKAGE"       = azurerm_storage_blob.deployment_package.url
     "STORAGE_CONNECTION_STRING"      = azurerm_storage_account.function.primary_connection_string
     "QUEUE_CONNECTION_STRING"        = azurerm_storage_account.function.primary_connection_string
   }
+}
+
+resource "azurerm_storage_container" "deployment" {
+  name                  = "deployments"
+  storage_account_name  = azurerm_storage_account.example.name
+  container_access_type = "public"
+}
+
+resource "azurerm_storage_blob" "deployment_package" {
+
+  count = var.deployment_package == null ? 0 : 1
+
+  name                   = "deployment.zip"
+  storage_account_name   = azurerm_storage_account.main.name
+  storage_container_name = azurerm_storage_container.deployment.name
+  type                   = "Block"
+  source                 = "deployment.zip"
+
 }

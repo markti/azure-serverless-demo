@@ -49,7 +49,7 @@ resource "azurerm_linux_function_app" "main" {
 resource "azurerm_storage_container" "deployment" {
   name                  = "deployments"
   storage_account_name  = azurerm_storage_account.function.name
-  container_access_type = "public"
+  container_access_type = "blob"
 }
 
 resource "azurerm_storage_blob" "deployment_package" {

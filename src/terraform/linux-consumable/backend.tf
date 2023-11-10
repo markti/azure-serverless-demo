@@ -16,8 +16,8 @@ resource "azurerm_service_plan" "consumption" {
   name                = "asp-${var.application_name}-${var.environment_name}-${random_string.main.result}"
   resource_group_name = azurerm_resource_group.main.name
   location            = azurerm_resource_group.main.location
-  os_type             = "Linux"
-  sku_name            = "Y1"
+  os_type             = var.function_app_os_type
+  sku_name            = var.function_app_sku
 }
 
 resource "azurerm_user_assigned_identity" "function" {
@@ -51,6 +51,7 @@ resource "azurerm_linux_function_app" "main" {
   }
 
   app_settings = {
+    "FUNCTIONS_WORKER_RUNTIME"       = "dotnet-isolated"
     "SCM_DO_BUILD_DURING_DEPLOYMENT" = "false"
     "WEBSITE_RUN_FROM_PACKAGE"       = local.package_url
     "STORAGE_CONNECTION_STRING"      = azurerm_storage_account.function.primary_connection_string
@@ -77,7 +78,7 @@ resource "azurerm_storage_blob" "deployment_package" {
   storage_account_name   = azurerm_storage_account.function.name
   storage_container_name = azurerm_storage_container.deployment.name
   type                   = "Block"
-  source_content         = file(var.zip_deployment_package)
+  source_content         = filebase64(var.zip_deployment_package)
   content_md5            = filemd5(var.zip_deployment_package)
 
 }

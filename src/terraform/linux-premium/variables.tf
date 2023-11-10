@@ -7,3 +7,9 @@ variable "environment_name" {
 variable "primary_region" {
   type = string
 }
+variable "function_app_sku" {
+  type = string
+}
+variable "function_app_os_type" {
+  type = string
+}

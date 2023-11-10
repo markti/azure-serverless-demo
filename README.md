@@ -41,3 +41,5 @@ Only available in these regions:
 
 https://github.com/andygjp/LinuxAzureFuncSample/blob/main/azure-pipelines.yml
 https://github.com/Azure/azure-cli/issues/20390
+
+https://azure.microsoft.com/en-us/free/students/

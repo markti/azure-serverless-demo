@@ -7,6 +7,10 @@ on:
         description: 'Environment to run tests against'
         type: environment
         required: true
+      cpu-architecture:
+        description: 'CPU architecture to build for'
+        required: true
+        default: 'linux-x64'
 
 env:
   DOTNET_VERSION: '6.0.401' # The .NET SDK version to use
@@ -45,7 +49,7 @@ jobs:
 
     - name: Generate the Deployment Package
       run: |
-        zip -r ../deployment.zip ./
+        7z a ../deployment.zip .
       working-directory: ${{ env.DOTNET_WORKING_DIRECTORY }}/publish
       
     - name: Display structure of downloaded files

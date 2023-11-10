@@ -77,7 +77,8 @@ resource "azurerm_storage_blob" "deployment_package" {
   storage_account_name   = azurerm_storage_account.function.name
   storage_container_name = azurerm_storage_container.deployment.name
   type                   = "Block"
-  source                 = var.zip_deployment_package
+  source_content         = file(var.zip_deployment_package)
+  content_md5            = filemd5(var.zip_deployment_package)
 
 }
 

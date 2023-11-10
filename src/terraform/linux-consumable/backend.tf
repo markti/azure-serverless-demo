@@ -73,7 +73,7 @@ resource "azurerm_storage_blob" "deployment_package" {
 
   count = var.zip_deployment_package == null ? 0 : 1
 
-  name                   = "deployment.zip"
+  name                   = "${random_uuid.always.result}.zip"
   storage_account_name   = azurerm_storage_account.function.name
   storage_container_name = azurerm_storage_container.deployment.name
   type                   = "Block"
@@ -84,4 +84,10 @@ resource "azurerm_storage_blob" "deployment_package" {
 
 locals {
   package_url = var.zip_deployment_package == null ? null : azurerm_storage_blob.deployment_package[0].url
+}
+
+resource "random_uuid" "always" {
+  keepers = {
+    first = "${timestamp()}"
+  }
 }

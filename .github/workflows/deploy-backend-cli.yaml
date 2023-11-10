@@ -132,13 +132,11 @@ jobs:
         env:
           ARM_SUBSCRIPTION_ID: ${{ vars.ARM_SUBSCRIPTION_ID }}
           ARM_TENANT_ID: ${{ vars.ARM_TENANT_ID }}
-          ARM_CLIENT_ID: ${{ vars.ARM_CLIENT_ID }}
-          ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
+          ARM_CLIENT_ID: ${{ vars.TERRAFORM_ARM_CLIENT_ID }}
+          ARM_CLIENT_SECRET: ${{ secrets.TERRAFORM_ARM_CLIENT_SECRET }}
           RESOURCE_GROUP_NAME: ${{needs.terraform.outputs.resource_group_name}}
           FUNCTION_NAME: ${{needs.terraform.outputs.function_name}}
         run: |
-          echo 'Hello World!'$RESOURCE_GROUP_NAME
-          echo 'Hello World!'$FUNCTION_NAME
           az login --service-principal -u $ARM_CLIENT_ID -p $ARM_CLIENT_SECRET --tenant $ARM_TENANT_ID --output none
           az account set -s $ARM_SUBSCRIPTION_ID --output none
           az functionapp deployment source config-zip -g $RESOURCE_GROUP_NAME -n $FUNCTION_NAME --src ./deployment.zip

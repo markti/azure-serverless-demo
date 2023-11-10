@@ -45,7 +45,7 @@ jobs:
 
     - name: Generate the Deployment Package
       run: |
-        zip -r ../deployment.zip ./
+        7z a ../deployment.zip .
       working-directory: ${{ env.DOTNET_WORKING_DIRECTORY }}/publish
       
     - name: Display structure of downloaded files

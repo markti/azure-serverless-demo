@@ -40,7 +40,7 @@ jobs:
       run: |
         pwd
         ls
-        dotnet publish FleetAPI.csproj -c Release -o ./publish
+        dotnet publish --self-contained true --runtime linux-x64 -c Release -o ./publish ./FleetAPI.csproj
       working-directory: ${{ env.DOTNET_WORKING_DIRECTORY }}
 
     - name: Generate the Deployment Package

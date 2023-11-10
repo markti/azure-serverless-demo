@@ -51,8 +51,9 @@ resource "azurerm_linux_function_app" "main" {
   }
 
   app_settings = {
+    "FUNCTIONS_WORKER_RUNTIME"       = "dotnet-isolated"
     "SCM_DO_BUILD_DURING_DEPLOYMENT" = "false"
-    "WEBSITE_RUN_FROM_PACKAGE"       = "1"
+    "WEBSITE_RUN_FROM_PACKAGE"       = "0"
     "STORAGE_CONNECTION_STRING"      = azurerm_storage_account.function.primary_connection_string
     "QUEUE_CONNECTION_STRING"        = azurerm_storage_account.function.primary_connection_string
   }

@@ -118,6 +118,10 @@ jobs:
   deploy:
     needs: [terraform, build]
     runs-on: ubuntu-latest
+
+    environment:
+      name: ${{ github.event.inputs.environment }}
+      
     steps:
       - uses: actions/checkout@v3
 

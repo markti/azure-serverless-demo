@@ -37,3 +37,7 @@ Only available in these regions:
 - westeurope
 - eastasia
 
+## Special Thanks
+
+https://github.com/andygjp/LinuxAzureFuncSample/blob/main/azure-pipelines.yml
+https://github.com/Azure/azure-cli/issues/20390

@@ -72,14 +72,6 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v2
 
-    - uses: actions/download-artifact@v3
-      with:
-        name: dotnet-deployment
-
-    - name: Stage Deployment Package
-      run: |
-        cp ./deployment.zip ${{ vars.TERRAFORM_WORKING_DIRECTORY }}
-
     - id: setup-terraform
       name: Setup `terraform`
       uses: hashicorp/setup-terraform@v2
@@ -96,7 +88,6 @@ jobs:
         ARM_CLIENT_SECRET: ${{ secrets.TERRAFORM_ARM_CLIENT_SECRET }}
         TF_VAR_application_name: ${{ vars.APPLICATION_NAME }}
         TF_VAR_environment_name: ${{ vars.ENVIRONMENT_NAME }}
-        TF_VAR_zip_deployment_package: "deployment.zip"
       working-directory: ${{ vars.TERRAFORM_WORKING_DIRECTORY }}
       run: |
         terraform init \

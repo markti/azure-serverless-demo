@@ -7,6 +7,10 @@ on:
         description: 'Environment to run tests against'
         type: environment
         required: true
+      cpu-architecture:
+        description: 'CPU architecture to build for'
+        required: true
+        default: 'linux-x64'
 
 env:
   DOTNET_VERSION: '6.0.401' # The .NET SDK version to use
@@ -40,7 +44,7 @@ jobs:
       run: |
         pwd
         ls
-        dotnet publish --self-contained true --runtime linux-x64 -c Release -o ./publish ./FleetAPI.csproj
+        dotnet publish --self-contained true --runtime ${{ github.event.inputs.cpu-architecture }} -c Release -o ./publish ./FleetAPI.csproj
       working-directory: ${{ env.DOTNET_WORKING_DIRECTORY }}
 
     - name: Generate the Deployment Package

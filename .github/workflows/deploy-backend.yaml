@@ -1,4 +1,4 @@
-name: Deploy-Backend
+name: Deploy-Backend-Azure-CLI
 
 on:
   workflow_dispatch:
@@ -76,14 +76,6 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v2
 
-    - uses: actions/download-artifact@v3
-      with:
-        name: dotnet-deployment
-
-    - name: Stage Deployment Package
-      run: |
-        cp ./deployment.zip ${{ vars.TERRAFORM_WORKING_DIRECTORY }}
-
     - id: setup-terraform
       name: Setup `terraform`
       uses: hashicorp/setup-terraform@v2
@@ -100,7 +92,6 @@ jobs:
         ARM_CLIENT_SECRET: ${{ secrets.TERRAFORM_ARM_CLIENT_SECRET }}
         TF_VAR_application_name: ${{ vars.APPLICATION_NAME }}
         TF_VAR_environment_name: ${{ vars.ENVIRONMENT_NAME }}
-        TF_VAR_zip_deployment_package: "deployment.zip"
       working-directory: ${{ vars.TERRAFORM_WORKING_DIRECTORY }}
       run: |
         terraform init \
@@ -110,3 +101,41 @@ jobs:
           -backend-config="key=${{ vars.APPLICATION_NAME }}-${{ vars.ENVIRONMENT_NAME }}"
 
         terraform apply -auto-approve
+
+        resource_group_name=$(terraform output -raw resource_group_name)
+        echo $resource_group_name
+        echo "resource_group_name=$resource_group_name" >> "$GITHUB_OUTPUT"
+
+        function_name=$(terraform output -raw function_name)
+        echo $function_name
+        echo "function_name=$function_name" >> "$GITHUB_OUTPUT"
+ 
+  deploy:
+    needs: [terraform, build]
+    runs-on: ubuntu-latest
+
+    environment:
+      name: ${{ github.event.inputs.environment }}
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/download-artifact@v3
+        with:
+          name: dotnet-deployment
+      
+      - name: Display structure of downloaded files
+        run: ls -R
+
+      - name: Deploy
+        env:
+          ARM_SUBSCRIPTION_ID: ${{ vars.ARM_SUBSCRIPTION_ID }}
+          ARM_TENANT_ID: ${{ vars.ARM_TENANT_ID }}
+          ARM_CLIENT_ID: ${{ vars.TERRAFORM_ARM_CLIENT_ID }}
+          ARM_CLIENT_SECRET: ${{ secrets.TERRAFORM_ARM_CLIENT_SECRET }}
+          RESOURCE_GROUP_NAME: ${{needs.terraform.outputs.resource_group_name}}
+          FUNCTION_NAME: ${{needs.terraform.outputs.function_name}}
+        run: |
+          az login --service-principal -u $ARM_CLIENT_ID -p $ARM_CLIENT_SECRET --tenant $ARM_TENANT_ID --output none
+          az account set -s $ARM_SUBSCRIPTION_ID --output none
+          az functionapp deployment source config-zip -g $RESOURCE_GROUP_NAME -n $FUNCTION_NAME --src ./deployment.zip

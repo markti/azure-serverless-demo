@@ -40,12 +40,12 @@ jobs:
       run: |
         pwd
         ls
-        dotnet publish --self-contained true -c Release -o ./publish ./FleetAPI.csproj
+        dotnet publish -c Release -o ./publish ./FleetAPI.csproj
       working-directory: ${{ env.DOTNET_WORKING_DIRECTORY }}
 
     - name: Generate the Deployment Package
       run: |
-        7z a ../deployment.zip .
+        zip -r ../deployment.zip .
       working-directory: ${{ env.DOTNET_WORKING_DIRECTORY }}/publish
       
     - name: Display structure of downloaded files

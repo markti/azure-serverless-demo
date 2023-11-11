@@ -16,8 +16,8 @@ resource "azurerm_service_plan" "consumption" {
   name                = "asp-${var.application_name}-${var.environment_name}-${random_string.main.result}"
   resource_group_name = azurerm_resource_group.main.name
   location            = azurerm_resource_group.main.location
-  os_type             = "Linux"
-  sku_name            = "Y1"
+  os_type             = var.function_app_os_type
+  sku_name            = var.function_app_sku
 }
 
 resource "azurerm_user_assigned_identity" "function" {

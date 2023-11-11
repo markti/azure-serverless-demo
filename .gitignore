@@ -3,3 +3,4 @@
 **/.debug.sh
 **/kube_config.yaml
 **/__azurite_db_table__.json
+src/.DS_Store

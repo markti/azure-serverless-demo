@@ -20,18 +20,6 @@ resource "azurerm_service_plan" "consumption" {
   sku_name            = var.function_app_sku
 }
 
-resource "azurerm_user_assigned_identity" "function" {
-  name                = "mi-${var.application_name}-${var.environment_name}-${random_string.main.result}"
-  resource_group_name = azurerm_resource_group.main.name
-  location            = azurerm_resource_group.main.location
-}
-
-resource "azurerm_role_assignment" "function_storage_reader" {
-  scope                = azurerm_storage_account.function.id
-  role_definition_name = "Storage Blob Data Reader"
-  principal_id         = azurerm_user_assigned_identity.function.principal_id
-}
-
 resource "azurerm_windows_function_app" "main" {
   name                       = "func-${var.application_name}-${var.environment_name}-${random_string.main.result}"
   resource_group_name        = azurerm_resource_group.main.name
@@ -57,8 +45,4 @@ resource "azurerm_windows_function_app" "main" {
     "QUEUE_CONNECTION_STRING"        = azurerm_storage_account.function.primary_connection_string
   }
 
-  identity {
-    type         = "UserAssigned"
-    identity_ids = [azurerm_user_assigned_identity.function.id]
-  }
 }

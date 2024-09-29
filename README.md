@@ -1,45 +1,56 @@
-# azure-serverless-demo
+# Welcome
 
-## Azure "12 Months Free"
+This codebase is a sample solution from the book [Mastering Terraform](https://amzn.to/3XNjHhx). This codebase is the solution from Chapter 12 where Soze Enterprises is deploying their solution with Serverless using Azure Functions. It includes infrastructure as code (IaC) using Terraform.
 
-New Azure users can signup and get this for free.
+## Terraform Code
 
-| Service | Monthly Limits |
-| --- | --- |
-| Virtual Machines| 750 hours limited ARM / AMD burstable |
-| SQL Database | 100k vCore seconds & 32gb storage |
-| Blob Storage | 5gb storage 20k reads / 10k writes |
-| Cosmos DB | 1k RUs w/ 25gb storage |
-| App Service | 10 apps, 1gb storage |
-| Functions | 1M requests |
-| Event Grid | 100k events per month |
+The Terraform code is stored in `src\terraform`. There is only one root module and it resides within this directory. There is only the default input variables value file `terraform.tfvars` that is loaded by default.
 
+You may need to change the `primary_region` input variable value if you wish to deploy to a different region. The default is `westus2`.
 
-## Micro-Transaction Services
+If you want to provision more than one environment you may need to remove the `environment_name` input variable value and specify an additional environment `tfvar` file.
 
-| Service | Pay per sip |
-| --- | --- |
-| Egress | $0.087 / GB |
-| Azure Storage | $0.0184 / gb / month |
-| Azure Storage | $0.05 / 10k writes |
-| Azure Storage | $0.004 / 10k writes |
+## GitHub Actions Workflows
 
-Static Website has a free tier with the following limits: 
+### Packer Workflows
+There are two GitHub Actions workflows that use Packer to build the Virtual Machine images.
 
-- Bandwidth: 100gb
-- Free SSL Certificates
-- Storage: 0.50gb
+### Terraform Workflows
+The directory `.github/workflows/` contains GitHub Actions workflows that implement a CI/CD solution using Packer and Terraform. There are individual workflows for the three Terraform core workflow operations `plan`, `apply`, and `destroy`.
 
-Only available in these regions:
-- westus2
-- centralus
-- eastus2
-- westeurope
-- eastasia
+# Pre-Requisites
 
-## Special Thanks
+## Entra Setup
 
-https://github.com/andygjp/LinuxAzureFuncSample/blob/main/azure-pipelines.yml
-https://github.com/Azure/azure-cli/issues/20390
+In order for GitHub Actions workflows to execute you need to have an identity that they can use to access Azure. Therefore you need to setup a new App Registration in Entra for Terraform. In addition, you should create a Client Secret to be used to authenticate.
 
-https://azure.microsoft.com/en-us/free/students/
+The Entra App Registration's Application ID (i.e., the Client ID) needs to be set as Environment Variables in GitHub.
+
+The App Registration should have it's Application ID stored in a GitHub environment Variable `TERRAFORM_ARM_CLIENT_ID` and it's client Secret stored in `TERRAFORM_ARM_CLIENT_SECRET`.
+
+## Azure Setup
+
+### App Registration Subscription Role Assignments
+
+The Entra App Registration created in the previous step need to be granted `Owner` access to your Azure Subscription.
+
+### Azure Storage Account for Terraform State
+
+Lastly you need to setup an Azure Storage Account that can be used to store Terraform State. You need to create an Azure Resource Group called `rg-terraform-state` and an Azure Storage Account within this resource group called `ststate00000`. replace the five (5) zeros (i.e., `00000`) with a five (5) digit random number. Then inside the Azure Storage Account create a Blob Storage Container called `tfstate`.
+
+The Resource Group Name, the Storage Account Name and the Blob Storage container Name will be used in the GitHub Configuration.
+
+### GitHub Configuration
+
+You need to add the following environment variables:
+
+- ARM_SUBSCRIPTION_ID
+- ARM_TENANT_ID
+- TERRAFORM_ARM_CLIENT_ID
+- BACKEND_RESOURCE_GROUP_NAME
+- BACKEND_STORAGE_ACCOUNT_NAME
+- BACKEND_STORAGE_CONTAINER_NAME
+
+You need to add the following secrets:
+
+- TERRAFORM_ARM_CLIENT_SECRET

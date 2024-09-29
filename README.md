@@ -12,9 +12,6 @@ If you want to provision more than one environment you may need to remove the `e
 
 ## GitHub Actions Workflows
 
-### Packer Workflows
-There are two GitHub Actions workflows that use Packer to build the Virtual Machine images.
-
 ### Terraform Workflows
 The directory `.github/workflows/` contains GitHub Actions workflows that implement a CI/CD solution using Packer and Terraform. There are individual workflows for the three Terraform core workflow operations `plan`, `apply`, and `destroy`.
 
